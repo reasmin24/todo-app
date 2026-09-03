@@ -72,7 +72,13 @@ export default function Home() {
 
   return (
     <main className="app">
-      <h1 className="title">Rukhsana To Do APP!</h1>
+      <div className="brand-lockup">
+        <div className="logo-mark" aria-label="Rukhsana To Do logo">
+          <span className="logo-check" aria-hidden="true">&#10003;</span>
+          <span className="logo-heart" aria-hidden="true">&#9825;</span>
+        </div>
+        <h1 className="title">Rukhsana To Do APP!</h1>
+      </div>
 
       <div className="card">
         <form className="add-form" onSubmit={addTodo}>
