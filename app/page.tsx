@@ -7,6 +7,8 @@ type Todo = {
   text: string;
   completed: boolean;
   createdAt: number;
+  dueDate?: string;
+  priority?: "low" | "medium" | "high";
 };
 
 const STORAGE_KEY = "vercel-todo-app:todos";
@@ -26,6 +28,8 @@ function loadTodos(): Todo[] {
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [text, setText] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState<NonNullable<Todo["priority"]>>("medium");
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [hydrated, setHydrated] = useState(false);
 
@@ -45,9 +49,18 @@ export default function Home() {
     if (!trimmed) return;
     setTodos((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), text: trimmed, completed: false, createdAt: Date.now() },
+      {
+        id: crypto.randomUUID(),
+        text: trimmed,
+        completed: false,
+        createdAt: Date.now(),
+        dueDate,
+        priority,
+      },
     ]);
     setText("");
+    setDueDate("");
+    setPriority("medium");
   }
 
   function toggleTodo(id: string) {
@@ -82,15 +95,43 @@ export default function Home() {
 
       <div className="card">
         <form className="add-form" onSubmit={addTodo}>
-          <input
-            className="input"
-            type="text"
-            placeholder="What needs to be done?"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            aria-label="New todo"
-            autoFocus
-          />
+          <div className="form-main">
+            <input
+              className="input"
+              type="text"
+              placeholder="What needs to be done?"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              aria-label="New todo"
+              autoFocus
+            />
+            <label className="date-field">
+              <span>Due date</span>
+              <input
+                className="date-input"
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+              />
+            </label>
+          </div>
+          <fieldset className="priority-field">
+            <legend>Priority</legend>
+            <div className="priority-options">
+              {(["low", "medium", "high"] as const).map((level) => (
+                <label key={level} className={`priority-option priority-${level}`}>
+                  <input
+                    type="radio"
+                    name="priority"
+                    value={level}
+                    checked={priority === level}
+                    onChange={() => setPriority(level)}
+                  />
+                  {level}
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <button className="btn btn-add" type="submit">
             Add
           </button>
@@ -111,7 +152,13 @@ export default function Home() {
                   checked={todo.completed}
                   onChange={() => toggleTodo(todo.id)}
                 />
-                <span className={`todo-text ${todo.completed ? "done" : ""}`}>{todo.text}</span>
+                <span className="todo-details">
+                  <span className={`todo-text ${todo.completed ? "done" : ""}`}>{todo.text}</span>
+                  <span className="todo-meta">
+                    {todo.dueDate && <span>Due {todo.dueDate}</span>}
+                    {todo.priority && <span className={`priority-badge priority-${todo.priority}`}>{todo.priority}</span>}
+                  </span>
+                </span>
               </label>
               <button
                 className="btn btn-delete"
