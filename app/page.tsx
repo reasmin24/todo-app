@@ -72,7 +72,7 @@ export default function Home() {
 
   return (
     <main className="app">
-      <h1 className="title">todos</h1>
+      <h1 className="title">Rukhsana To Do APP!</h1>
 
       <div className="card">
         <form className="add-form" onSubmit={addTodo}>
