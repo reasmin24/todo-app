@@ -41,9 +41,14 @@ export default function Home() {
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [search, setSearch] = useState("");
   const [hydrated, setHydrated] = useState(false);
+  const [today, setToday] = useState("");
+  const [greeting, setGreeting] = useState("");
 
   useEffect(() => {
     setTodos(loadTodos());
+    setToday(new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date()));
+    const hour = new Date().getHours();
+    setGreeting(hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening");
     setHydrated(true);
   }, []);
 
@@ -95,9 +100,6 @@ export default function Home() {
   const remaining = todos.filter((t) => !t.completed).length;
   const completed = todos.length - remaining;
   const progress = todos.length ? Math.round((completed / todos.length) * 100) : 0;
-  const today = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date());
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   const categories = [
     ["personal", "Personal", "✿"],
     ["work", "Work", "▣"],
@@ -111,8 +113,8 @@ export default function Home() {
       <header className="topbar">
         <div className="avatar" aria-hidden="true">R</div>
         <div>
-          <p className="date-label">{today.toUpperCase()}</p>
-          <h1>{greeting}, Rukhsana <span aria-hidden="true">&#10024;</span></h1>
+          <p className="date-label">{today ? today.toUpperCase() : "YOUR DAY, YOUR WAY"}</p>
+          <h1>{greeting || "Welcome back"}, Rukhsana <span aria-hidden="true">&#10024;</span></h1>
         </div>
         <button className="theme-button" type="button" aria-label="Toggle theme" onClick={() => document.body.classList.toggle("night-mode")}>
           <span aria-hidden="true">&#127769;</span>
