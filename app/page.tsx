@@ -110,6 +110,7 @@ export default function Home() {
 
   return (
     <main className="app">
+      <div className="name-watermark" aria-hidden="true">RUKHSANA</div>
       <header className="topbar">
         <div className="avatar" aria-hidden="true">R</div>
         <div>
